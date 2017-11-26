@@ -33,7 +33,7 @@ void disk_ops(int algo)
         }
       }
       usleep(DISK_MOVE_TIME * movement);
-printf("Request took %d usecs\n",DISK_MOVE_TIME * movement);
+      printf("Request took %d usecs \n",DISK_MOVE_TIME * movement);
       temp_head = temp_head->next;
     }
   }
