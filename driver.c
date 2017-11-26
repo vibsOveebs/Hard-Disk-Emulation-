@@ -2,13 +2,11 @@
 
 void init()
 {
-  for (int i=0 ; i<PLATTERS ; i++)
-  {
     for (int j=0 ; j<SECTORS*TRACKS ; j++)
     {
-      disk[i][j] = 0;
+      disk[j] = 0;
     }
-  }
+
   srand(1000);
   clock_gettime(CLOCK_MONOTONIC, &globalClock);
   limit = 1;

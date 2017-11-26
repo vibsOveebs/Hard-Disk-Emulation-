@@ -7,13 +7,14 @@ void disk_ops(int algo)
   {
     //Following FCFS
     buffer_node* temp_head = new_buffer_head;
-    int x,y;
+    int y;
     while(temp_head!=NULL)
     {
-      x = (temp_head->sector_number/(SECTORS*TRACKS));
-      y = temp_head->sector_number % (SECTORS*TRACKS);
-      int movement =  abs(temp_head->sector_number - disk_head);
+      y = temp_head->sector_number;
+      int movement =  abs((temp_head->sector_number/SECTORS) - (disk_head/SECTORS));
+      usleep(AVG_ROT_DELAY + movement);
       printf("Head Movement: %d\n",movement);
+      printf("Movement took %d usecs", AVG_ROT_DELAY + movement);
       disk_head = temp_head->sector_number;
       if(strcmp(temp_head->op_name,"READ") == 0)
       {
@@ -21,19 +22,17 @@ void disk_ops(int algo)
           printf("BAD SECTOR\n");
 
         else
-          printf("READ %d from SECTOR %d [Track %d]\n", disk[x][y], temp_head->sector_number, (y/SECTORS) + 1);
+          printf("READ %d from SECTOR %d [Track %d]\n", disk[y], temp_head->sector_number, (y/SECTORS) + 1);
       }
       else{
         if(temp_head->sector_number >= SECTORS*TRACKS )
           printf("BAD SECTOR\n");
 
         else{
-          disk[x][y] = temp_head->data;
-          printf("WROTE %d into SECTOR %d [Track %d]\n", disk[x][y], temp_head->sector_number, (y/SECTORS) + 1);
+          disk[y] = temp_head->data;
+          printf("WROTE %d into SECTOR %d [Track %d]\n", disk[y], temp_head->sector_number, (y/SECTORS) + 1);
         }
       }
-      usleep(DISK_MOVE_TIME * movement);
-      printf("Movement took %d usecs \n",DISK_MOVE_TIME * movement);
       temp_head = temp_head->next;
     }
   }

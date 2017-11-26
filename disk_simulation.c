@@ -19,9 +19,10 @@ void *_thread_handler(void *arg)
 
   struct timespec localTime;
   clock_gettime(CLOCK_MONOTONIC, &localTime);
-  long int accum = localTime.tv_sec - globalClock.tv_sec;
-  myinfo->exit_time = accum;
-  printf("THREAD %d finished at %ld\n",myinfo->tid,myinfo->exit_time );
+  localTime.tv_sec - globalClock.tv_sec;
+  myinfo->exit_time.tv_sec= localTime.tv_sec - globalClock.tv_sec;
+  myinfo->exit_time.tv_nsec = localTime.tv_nsec - globalClock.tv_nsec;
+  printf("THREAD %d finished at %ld.%ld\n",myinfo->tid,myinfo->exit_time.tv_sec, myinfo->exit_time.tv_nsec);
 }
 
 int main(int argc, char const *argv[]) {

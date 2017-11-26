@@ -5,13 +5,14 @@
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
-#define SECTORS 100
-#define TRACKS 10
+#define SECTORS 10000
+#define TRACKS 100
 #define PLATTERS 1
-#define DISK_MOVE_TIME 900 //in usec
+#define AVG_ROT_DELAY 2000 //in usec
 
-int disk [PLATTERS][SECTORS*TRACKS];
+int disk [SECTORS*TRACKS];
 
 // structure of thread
 typedef struct _thread_info{
@@ -20,7 +21,7 @@ typedef struct _thread_info{
   char op_name[11]; 
   int data;
   int arrival_time;
-  long int exit_time;
+  struct timespec exit_time;
 }thread_info;
 
 thread_info *incoming[10001];
