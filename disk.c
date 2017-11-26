@@ -32,6 +32,7 @@ void disk_ops(int algo)
           printf("WROTE %d into SECTOR %d [Track %d]\n", disk[x][y], temp_head->sector_number, (y/SECTORS) + 1);
         }
       }
+      printf("Request took %d usecs",DISK_MOVE_TIME * movement); 
       usleep(DISK_MOVE_TIME * movement);
       temp_head = temp_head->next;
     }
