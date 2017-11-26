@@ -13,7 +13,6 @@ void disk_ops(int algo)
       y = temp_head->sector_number;
       int movement =  abs((temp_head->sector_number/SECTORS) - (disk_head/SECTORS));
       usleep(AVG_ROT_DELAY + movement);
-      printf("Head Movement: %d\n",movement);
       printf("Movement took %d usecs \n", AVG_ROT_DELAY + movement);
       disk_head = temp_head->sector_number;
       if(strcmp(temp_head->op_name,"READ") == 0)
