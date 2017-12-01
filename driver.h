@@ -18,15 +18,17 @@ int disk [SECTORS*TRACKS];
 typedef struct _thread_info{
   int tid;
   int sector_number;
-  char op_name[11]; 
+  char op_name[11];
   int data;
   int arrival_time;
   struct timespec exit_time;
 }thread_info;
 
 thread_info *incoming[10001];
+pthread_t disk_thread;
 
 typedef struct _buffer_node{
+  int req_id;
   char op_name[11];
   int sector_number;
   int data;
@@ -39,15 +41,16 @@ int disk_head;
 int buff_count;
 int limit;
 
+int n,num_request_served;
+
 void ENTER_OPERATION(char *op_name, int sector_number);
 void EXIT_OPERATION(char *op_name, int sector_number);
 void read_disk(int sector_number);
 void write_disk(int sector_number, int data);
 
 void *_thread_handler(void* arg);
-
+void *disk_ops(void *arg);
+int sectorToTrack(int);
 void init();
 
 struct timespec globalClock;
-
-void disk_ops(int algo);
