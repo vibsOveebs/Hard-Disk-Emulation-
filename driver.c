@@ -1,6 +1,10 @@
-#include "driver.h"
 #include <pthread.h>
-
+#include <signal.h>
+#include "driver.h"
+void alarm_event() {
+  should_run = 1;
+  printf("alarm\n");
+}
 
 void init()
 {
@@ -11,7 +15,7 @@ void init()
   srand(1000);
   clock_gettime(CLOCK_MONOTONIC, &globalClock);
   buff_count = 0;
-  limit = 1;
+  limit = 20;
   disk_head = 0;
   num_request_served = 0;
   //lock = PTHREAD_MUTEX_INITIALIZER; 
@@ -21,6 +25,13 @@ void init()
   algo = (int *) malloc (sizeof(int));
   *algo = 1;
   pthread_create(&disk_thread,NULL,disk_ops,algo);
+
+  //timer setup
+  struct sigaction action;
+  action.sa_handler = &alarm_event;
+  action.sa_flags = 0;  // Restart interrupted system calls
+  sigemptyset(&action.sa_mask);
+  sigaction(SIGALRM, &action, NULL);
 }
 
 int sectorToTrack(int sector_number)
@@ -53,12 +64,12 @@ void read_disk(int sector_number)
         b_tail = temp1;
       }
       buff_count ++;
+      alarm(1);
       pthread_mutex_unlock(&lock);
       break;
     }
     pthread_mutex_unlock(&lock);
   }
-
 
   //wait for operation to finish up
   EXIT_OPERATION(t,sector_number);
@@ -88,6 +99,7 @@ void write_disk(int sector_number, int data)
       }
       buff_count ++;
       pthread_mutex_unlock(&lock);
+      alarm(1);
       break;
     }
     pthread_mutex_unlock(&lock);
@@ -95,6 +107,7 @@ void write_disk(int sector_number, int data)
 
   //wait for operation to finish up
   EXIT_OPERATION(t,sector_number);
+
 }
 
 void ENTER_OPERATION(char *op_name, int sector_number)

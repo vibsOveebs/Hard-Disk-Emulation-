@@ -85,8 +85,6 @@ void process_list(buffer_node* list, int dir) {
   num_request_served++;
   //printf("request served: %d\n", num_request_served);
   process_list(list->next, dir);
-
-
 }
 
 
@@ -97,8 +95,9 @@ void *disk_ops(void *arg)
 
   while(num_request_served < n)
   {
-    while(buff_count < limit); //Spin lock
 
+    while(buff_count < limit && !should_run); //Spin lock
+    should_run = 0;
     pthread_mutex_lock(&lock);
     new_buffer_head = b_head;
     b_head = b_tail = NULL;
@@ -164,7 +163,6 @@ void *disk_ops(void *arg)
         else {
           list = &gt_list;
         }
-
         *list = add_to_sorted_list(*list, temp_head);
         temp_head = next_item;
       }

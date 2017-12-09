@@ -41,7 +41,7 @@ buffer_node *b_head,*b_tail,*new_buffer_head;
 int disk_head;
 int buff_count;
 int limit;
-
+int should_run;
 int n,num_request_served;
 
 void ENTER_OPERATION(char *op_name, int sector_number);
