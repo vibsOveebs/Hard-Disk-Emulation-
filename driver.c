@@ -1,6 +1,7 @@
 #include "driver.h"
 #include <pthread.h>
 
+
 void init()
 {
   for (int i=0 ; i<SECTORS*TRACKS ; i++)
@@ -18,7 +19,7 @@ void init()
   pthread_mutex_init(&lock, NULL);
   int *algo;
   algo = (int *) malloc (sizeof(int));
-  *algo = 0;
+  *algo = 1;
   pthread_create(&disk_thread,NULL,disk_ops,algo);
 }
 
