@@ -26,6 +26,7 @@ typedef struct _thread_info{
 
 thread_info *incoming[10001];
 pthread_t disk_thread;
+pthread_mutex_t lock;
 
 typedef struct _buffer_node{
   int req_id;
