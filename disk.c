@@ -2,20 +2,6 @@
 #define DIR_LEFT 0
 #define DIR_RIGHT 1  
 
-buffer_node* reverse_list(buffer_node* list) {
-  if (list == NULL) {
-    return NULL;
-  } 
-  else if (list->next == NULL) {
-    return list;
-  }
-  else {
-    buffer_node* rest = reverse_list(list->next);
-    rest->next = list;
-    list->next = NULL;
-    return rest;
-  }
-}
 
 void print_list(buffer_node* list) {
   buffer_node* curr = list;
@@ -27,19 +13,19 @@ void print_list(buffer_node* list) {
   }
 }
 
-buffer_node* add_to_sorted_list(buffer_node* list, buffer_node* item) {
+buffer_node* add_to_sorted_list(buffer_node* list, buffer_node* item, int reverse) {
   if (list == NULL) {
     item->next = NULL;
     return item;
   }
 
-  if (item->sector_number < list->sector_number) {
+  if (item->sector_number > list->sector_number && reverse || item->sector_number < list->sector_number && !reverse ) {
     item->next = list;
     return item;
   }
 
   item->next = NULL;
-  list->next = add_to_sorted_list(list->next, item);
+  list->next = add_to_sorted_list(list->next, item, reverse);
   return list;
 }
 
@@ -163,7 +149,7 @@ void *disk_ops(void *arg)
         else {
           list = &gt_list;
         }
-        *list = add_to_sorted_list(*list, temp_head);
+        *list = add_to_sorted_list(*list, temp_head, temp_head->sector_number < disk_head);
         temp_head = next_item;
       }
       // printf("less than list:\n");
@@ -177,12 +163,14 @@ void *disk_ops(void *arg)
       //handle equal to requests
       buffer_node* curr = eq_list;
       //dont change dir if no list
-      buffer_node* first_pass = dir == DIR_LEFT ? reverse_list(lt_list) : gt_list;
-      buffer_node* second_pass = dir == DIR_LEFT ? gt_list : reverse_list(lt_list);
+      buffer_node* first_pass = dir == DIR_LEFT ? lt_list : gt_list;
+      buffer_node* second_pass = dir == DIR_LEFT ? gt_list : lt_list;
       process_list(eq_list, dir);
       process_list(first_pass, dir);
-      dir = dir == DIR_LEFT ? DIR_RIGHT : DIR_LEFT;
-      process_list(second_pass, dir);
+      if (second_pass != NULL) {
+        dir = dir == DIR_LEFT ? DIR_RIGHT : DIR_LEFT;
+        process_list(second_pass, dir);
+      }
     }
   }
 }

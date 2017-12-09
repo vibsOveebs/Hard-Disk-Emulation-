@@ -3,7 +3,7 @@
 #include "driver.h"
 void alarm_event() {
   should_run = 1;
-  printf("alarm\n");
+  //printf("alarm\n");
 }
 
 void init()
@@ -15,7 +15,7 @@ void init()
   srand(1000);
   clock_gettime(CLOCK_MONOTONIC, &globalClock);
   buff_count = 0;
-  limit = 20;
+  limit = 5;
   disk_head = 0;
   num_request_served = 0;
   //lock = PTHREAD_MUTEX_INITIALIZER; 
