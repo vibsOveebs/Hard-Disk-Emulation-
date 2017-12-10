@@ -3,9 +3,9 @@ pa5-scott-mitchell created by GitHub Classroom
 
 To run use:
 --------------------------------------
-make clean
-make 
-./disk_simulator < inputfile.txt
+(1) make clean
+(2) make 
+(3) ./disk_simulator < inputfile.txt
 ----------------------------------------
 AUTHORS
 ----------------------------------------
