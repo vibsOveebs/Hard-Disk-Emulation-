@@ -8,7 +8,11 @@ make
 ./disk_simulator < inputfile.txt
 
 
-#Contributers
-Parth Patel
-Scott Mitchell
-Vibhu C. Patel
+=======================================================================================
+AUTHORS
+
+	Scott Mitchell
+	Vibhu C. Patel
+	Parth Patel
+
+---------------------------------------------------------------------------------------
