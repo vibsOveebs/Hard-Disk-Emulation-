@@ -5,6 +5,9 @@ void *_thread_handler(void *arg)
   thread_info *myinfo = (thread_info*)arg;
   sleep(myinfo->arrival_time);
     //Reading from disk
+  struct timespec startTime;
+  clock_gettime(CLOCK_MONOTONIC, &startTime);
+  printf("THREAD %d issued request at %lld.%ld\n",myinfo->tid,(long long) startTime.tv_sec - globalClock.tv_sec, startTime.tv_nsec - globalClock.tv_nsec);
   if(strcmp(myinfo->op_name,"READ") == 0)
   {
       read_disk(myinfo->sector_number);
