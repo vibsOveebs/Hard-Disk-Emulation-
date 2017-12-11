@@ -1,6 +1,8 @@
 #include <pthread.h>
 #include <signal.h>
 #include "driver.h"
+
+
 void alarm_event() {
   should_run = 1;
   //printf("alarm\n");
@@ -22,10 +24,11 @@ void init()
   num_request_served = 0;
   //lock = PTHREAD_MUTEX_INITIALIZER; 
 
+  pthread_mutex_init(&req_lock, NULL);
   pthread_mutex_init(&lock, NULL);
   int *algo;
   algo = (int *) malloc (sizeof(int));
-  *algo = 1;
+  *algo = 0;
   pthread_create(&disk_thread,NULL,disk_ops,algo);
 
   //timer setup
@@ -54,8 +57,7 @@ void read_disk(int sector_number)
   temp1->sector_number = sector_number;
   temp1->next = NULL;
   temp1->data = 0;
-
-
+  temp1->req_id = 0;
   
   while (1) {
     pthread_mutex_lock(&lock);
@@ -69,18 +71,14 @@ void read_disk(int sector_number)
         b_tail = temp1;
       }
       buff_count ++;
-      temp1->req_id = req;
-      req++;
-      struct timespec startTime;
-      clock_gettime(CLOCK_MONOTONIC, &startTime);
-      printf("REQUEST %d issued at %lld.%ld\n", temp1->req_id,(long long) startTime.tv_sec, startTime.tv_nsec);
-
       alarm(1);
       pthread_mutex_unlock(&lock);
       break;
     }
     pthread_mutex_unlock(&lock);
   }
+
+  while (temp1->req_id != -1);  
 
   //wait for operation to finish up
   EXIT_OPERATION(t,sector_number);
@@ -96,6 +94,8 @@ void write_disk(int sector_number, int data)
   temp1->sector_number = sector_number;
   temp1->next = NULL;
   temp1->data = data;
+  temp1->req_id = 0;
+
 
   while (1) {
     pthread_mutex_lock(&lock);
@@ -109,19 +109,14 @@ void write_disk(int sector_number, int data)
         b_tail = temp1;
       }
       buff_count ++;
-
-      temp1->req_id = req;
-      req++;
-      struct timespec startTime;
-      clock_gettime(CLOCK_MONOTONIC, &startTime);
-      printf("REQUEST %d issued at %lld.%ld\n", temp1->req_id,(long long) startTime.tv_sec, startTime.tv_nsec);
-
       pthread_mutex_unlock(&lock);
       alarm(1);
       break;
     }
     pthread_mutex_unlock(&lock);
   }
+
+  while (temp1->req_id != -1);  
 
   //wait for operation to finish up
   EXIT_OPERATION(t,sector_number);

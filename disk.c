@@ -68,11 +68,8 @@ void process_list(buffer_node* list, int dir) {
       printf("WROTE %d into SECTOR %d [Track %d]\n", disk[y], y, sectorToTrack(y) + 1);
     }
   }
+  list->req_id = -1;
 
-
-  struct timespec endTime;
-  clock_gettime(CLOCK_MONOTONIC, &endTime);
-  printf("REQUEST %d finished at %lld.%ld\n", list->req_id,(long long) endTime.tv_sec, endTime.tv_nsec);
   
   num_request_served++;
   //printf("request served: %d\n", num_request_served);
@@ -128,9 +125,7 @@ void *disk_ops(void *arg)
             printf("WROTE %d into SECTOR %d [Track %d]\n", disk[y], y, sectorToTrack(y) + 1);
           }
         }
-  struct timespec endTime;
-  clock_gettime(CLOCK_MONOTONIC, &endTime);
-  printf("REQUEST %d finished at %lld.%ld\n", temp_head->req_id,(long long) endTime.tv_sec, endTime.tv_nsec);
+        temp_head->req_id = -1;
         temp_head = temp_head->next;
         num_request_served++;
 
